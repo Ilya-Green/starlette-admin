@@ -15,6 +15,7 @@ from starlette_admin.i18n import lazy_gettext as _
 class AdminUser:
     username: str = field(default_factory=lambda: _("Administrator"))
     photo_url: Optional[str] = None
+    role: Optional[str] = None
 
 
 class AuthProvider:
