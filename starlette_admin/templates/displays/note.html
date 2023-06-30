@@ -1,4 +1,11 @@
 <div class="list-group">
+        <textarea name="comments" id="comments" cols="30" rows="10"></textarea>
+   <button id="sendcomments" type="button" class="btn btn-primary btn-block me-2">
+       <i class="fa-solid fa-edit me-2"></i>
+       Send
+   </button>
+</div>
+<div class="list-group">
     {%if data | is_iter %}
         <ul>
     {% for value in data %}
@@ -16,3 +23,27 @@
 {#    {{ data }}#}
     {%endif%}
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function() {
+  $("#sendcomments").click(function() {
+    const note = $("#comments").val(); // Получить значение из текстового поля "comments"
+    const url = "http://127.0.0.1:8000/admin/api/client/action?pks=6&name=add_note&note=" + encodeURIComponent(note);
+
+    fetch(url, {
+      method: "POST"
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log("LOL");
+      } else {
+        console.log("LOL");
+      }
+    })
+    .catch(error => {
+      console.log("LOL");
+    });
+  });
+});
+
+</script>
