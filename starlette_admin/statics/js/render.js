@@ -32,7 +32,7 @@ const render = {
         <div>
       `;
   },
-  text: function render(data, type, full, meta, fieldOptions) {
+  text: function render(data, type, fu  ll, meta, fieldOptions) {
     if (data == null) return null_column();
     if (Array.isArray(data) && data.length == 0) return empty_column();
     data = Array.isArray(data) ? data : [data].map((d) => escape(d)).join(",");
