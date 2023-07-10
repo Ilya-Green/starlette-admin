@@ -68,6 +68,7 @@ def build_order_clauses(order_list: List[str], model: Any) -> Any:
     clauses = []
     for value in order_list:
         attr_key, order = value.strip().split(maxsplit=1)
+        if attr_key == 'status': attr_key = 'status_id'
         attr = getattr(model, attr_key, None)
         if attr is not None:
             clauses.append(attr.desc() if order.lower() == "desc" else attr)

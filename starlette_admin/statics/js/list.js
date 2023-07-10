@@ -457,7 +457,7 @@ $(function () {
         $("#modal-loading").modal("hide");
         if (response.ok) {
           table.rows().deselect();
-          table.ajax.reload();
+          table.ajax.reload( null, false );
           successAlert((await response.json())["msg"]);
         } else {
           if (response.status == 400) {
