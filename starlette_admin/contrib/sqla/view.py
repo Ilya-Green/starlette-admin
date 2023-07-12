@@ -205,9 +205,9 @@ class ModelView(BaseModelView):
                 )
             stmt = stmt.where(where)  # type: ignore
         stmt = stmt.order_by(*build_order_clauses(order_by or [], self.model))
-        for field in self.fields:
-            if isinstance(field, RelationField):
-                stmt = stmt.options(joinedload(getattr(self.model, field.name)))
+        # for field in self.fields:
+        #     if isinstance(field, RelationField):
+        #         stmt = stmt.options(joinedload(getattr(self.model, field.name)))
         if isinstance(session, AsyncSession):
             return (await session.execute(stmt)).scalars().unique().all()
         return (
