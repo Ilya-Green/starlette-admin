@@ -6,6 +6,8 @@ from starlette_admin.i18n import lazy_gettext as _
 def action(
     name: str,
     text: str,
+    id: Optional[str] = "",
+    data_bs_target: Optional[str] = "#modal-action",
     confirmation: Optional[str] = None,
     submit_btn_text: Optional[str] = _("Yes, Proceed"),
     submit_btn_class: Optional[str] = "btn-primary",
@@ -61,6 +63,7 @@ def action(
     def wrap(f: Callable[..., Awaitable[str]]) -> Callable[..., Awaitable[str]]:
         f._action = {  # type: ignore
             "name": name,
+            "id": id,
             "text": text,
             "confirmation": confirmation,
             "submit_btn_text": submit_btn_text,
