@@ -436,6 +436,152 @@ $(function () {
   `).appendTo("#alertContainer");
   }
 
+        function submitActionStatus(name, formData, parameters) {
+                    $("#modal-loading").modal("show");
+                    query = new URLSearchParams();
+                     selectedRows.forEach((s) => {
+                      query.append("pks", s);
+                    });
+                    query.append("name", name);
+                    for (const key in parameters) {
+                      if (parameters.hasOwnProperty(key)) {
+                        query.append(key, parameters[key]);
+                      }
+                    }
+
+                    $('#modal-action-status :input').each(function() {
+                        query.append(this.name, $(this).val());
+                    });
+
+                        const url = window.location.origin + "/admin/api/client/action?" + query.toString();
+                        fetch(url, {
+                            method: "POST",
+                            body: formData,
+                        })
+                      .then(async (response) => {
+                          location.reload();
+                        await new Promise((r) => setTimeout(r, 500));
+                        $("#modal-loading").modal("hide");
+                        if (response.ok) {
+                          table.rows().deselect();
+                          table.ajax.reload();
+                          successAlert((await response.json())["msg"]);
+                        } else {
+                          if (response.status == 400) {
+                            return Promise.reject((await response.json())["msg"]);
+                          }
+                          return Promise.reject("Something went wrong!");
+                        }
+                      })
+                      .catch(async (error) => {
+                        await new Promise((r) => setTimeout(r, 500));
+                        dangerAlert(error);
+                      });
+                  }
+
+
+              $("#modal-admin").on("show.bs.modal", function (event) {
+                  var button = $(event.relatedTarget); // Button that triggered the modal
+                  var confirmation = button.data("confirmation");
+                  var form = button.data("form");
+                  var name = button.data("name");
+                  var submit_btn_text = button.data("submit-btn-text");
+                  var submit_btn_class = button.data("submit-btn-class");
+
+                  var modal = $(this);
+                  modal.find("#actionConfirmation").text(confirmation);
+                  var modalForm = modal.find("#modal-form");
+                  $('#modal-form').html(form);
+                  var actionSubmit = modal.find("#actionSubmit");
+                  actionSubmit.text(submit_btn_text);
+                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                  actionSubmit.unbind();
+                  actionSubmit.on("click", function (event) {
+                      const formElement = modalForm.find("form");
+                      const formData = formElement.length
+                          ? new FormData(formElement.get(0))
+                          : new FormData();
+
+                    var selectsInModal = $("#modal-admin select");
+                      var parameters = {};
+                      selectsInModal.each(function() {
+                          var selectedValue = $(this).val();
+                          var key = $(this).attr("name");
+                          parameters[key] = selectedValue;
+                      });
+                      submitActionStatus(name, formData, parameters);
+                  });
+              });
+
+
+              $("#modal-department").on("show.bs.modal", function (event) {
+                  var button = $(event.relatedTarget); // Button that triggered the modal
+                  var confirmation = button.data("confirmation");
+                  var form = button.data("form");
+                  var name = button.data("name");
+                  var submit_btn_text = button.data("submit-btn-text");
+                  var submit_btn_class = button.data("submit-btn-class");
+
+                  var modal = $(this);
+                  modal.find("#actionConfirmation").text(confirmation);
+                  var modalForm = modal.find("#modal-form");
+                  $('#modal-form').html(form);
+                  var actionSubmit = modal.find("#actionSubmitDepartment");
+                  actionSubmit.text(submit_btn_text);
+                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                  actionSubmit.unbind();
+                  actionSubmit.on("click", function (event) {
+                      const formElement = modalForm.find("form");
+                      const formData = formElement.length
+                          ? new FormData(formElement.get(0))
+                          : new FormData();
+
+                    var selectsInModal = $("#modal-department select");
+                      var parameters = {};
+                      selectsInModal.each(function() {
+                          var selectedValue = $(this).val();
+                          var key = $(this).attr("name");
+                          parameters[key] = selectedValue;
+                      });
+                      submitActionStatus(name, formData, parameters);
+                  });
+              });
+
+              $("#modal-desk").on("show.bs.modal", function (event) {
+                  var button = $(event.relatedTarget); // Button that triggered the modal
+                  var confirmation = button.data("confirmation");
+                  var form = button.data("form");
+                  var name = button.data("name");
+                  var submit_btn_text = button.data("submit-btn-text");
+                  var submit_btn_class = button.data("submit-btn-class");
+
+                  var modal = $(this);
+                  modal.find("#actionConfirmation").text(confirmation);
+                  var modalForm = modal.find("#modal-form");
+                  $('#modal-form').html(form);
+                  var actionSubmit = modal.find("#actionSubmitDesk");
+                  actionSubmit.text(submit_btn_text);
+                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                  actionSubmit.unbind();
+                  actionSubmit.on("click", function (event) {
+                      const formElement = modalForm.find("form");
+                      const formData = formElement.length
+                          ? new FormData(formElement.get(0))
+                          : new FormData();
+
+                    var selectsInModal = $("#modal-desk select");
+                      var parameters = {};
+                      selectsInModal.each(function() {
+                          var selectedValue = $(this).val();
+                          var key = $(this).attr("name");
+                          parameters[key] = selectedValue;
+                      });
+                      submitActionStatus(name, formData, parameters);
+                  });
+              });
+
+
+
   function submitAction(name, formData) {
     $("#modal-loading").modal("show");
     query = new URLSearchParams();
