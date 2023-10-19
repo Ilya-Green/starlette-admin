@@ -69,6 +69,7 @@ def action(
             "submit_btn_text": submit_btn_text,
             "submit_btn_class": submit_btn_class,
             "form": form,
+            "data_bs_target": data_bs_target,
         }
         return f
 

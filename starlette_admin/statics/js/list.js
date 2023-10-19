@@ -252,6 +252,7 @@ $(function () {
 
   // Datatable instance
   var table = $("#dt").DataTable({
+    autoWidth: false,
     dom: "r<'table-responsive't><'card-footer d-flex align-items-center'<'m-0'i><'m-0 ms-auto'p>>",
     paging: true,
     lengthChange: true,
@@ -436,152 +437,250 @@ $(function () {
   `).appendTo("#alertContainer");
   }
 
-        function submitActionStatus(name, formData, parameters) {
-                    $("#modal-loading").modal("show");
-                    query = new URLSearchParams();
-                     selectedRows.forEach((s) => {
-                      query.append("pks", s);
-                    });
-                    query.append("name", name);
-                    for (const key in parameters) {
-                      if (parameters.hasOwnProperty(key)) {
-                        query.append(key, parameters[key]);
-                      }
-                    }
+                    function submitActionStatus(name, formData, parameters) {
+                              console.log('action');
+                                $("#modal-loading").modal("show");
+                                query = new URLSearchParams();
+                                 selectedRows.forEach((s) => {
+                                  query.append("pks", s);
+                                  console.log(s);
+                                });
+                                query.append("name", name);
+                                for (const key in parameters) {
+                                  if (parameters.hasOwnProperty(key)) {
+                                    query.append(key, parameters[key]);
+                                  }
+                                }
+                                console.log(query);
 
-                    $('#modal-action-status :input').each(function() {
-                        query.append(this.name, $(this).val());
-                    });
+                                $('#modal-action-status :input').each(function() {
+                                    query.append(this.name, $(this).val());
+                                });
 
-                        const url = window.location.origin + "/admin/api/client/action?" + query.toString();
-                        fetch(url, {
-                            method: "POST",
-                            body: formData,
-                        })
-                      .then(async (response) => {
-                          location.reload();
-                        await new Promise((r) => setTimeout(r, 500));
-                        $("#modal-loading").modal("hide");
-                        if (response.ok) {
-                          table.rows().deselect();
-                          table.ajax.reload();
-                          successAlert((await response.json())["msg"]);
-                        } else {
-                          if (response.status == 400) {
-                            return Promise.reject((await response.json())["msg"]);
-                          }
-                          return Promise.reject("Something went wrong!");
-                        }
-                      })
-                      .catch(async (error) => {
-                        await new Promise((r) => setTimeout(r, 500));
-                        dangerAlert(error);
-                      });
-                  }
+                                    const url = window.location.origin + "/admin/api/client/action?" + query.toString();
+                                    fetch(url, {
+                                        method: "POST",
+                                        body: formData,
+                                    })
+                                  .then(async (response) => {
+                                      location.reload();
+                                    await new Promise((r) => setTimeout(r, 500));
+                                    $("#modal-loading").modal("hide");
+                                    if (response.ok) {
+                                      table.rows().deselect();
+                                      table.ajax.reload();
+                                      successAlert((await response.json())["msg"]);
+                                    } else {
+                                      if (response.status == 400) {
+                                        return Promise.reject((await response.json())["msg"]);
+                                      }
+                                      return Promise.reject("Something went wrong!");
+                                    }
+                                  })
+                                  .catch(async (error) => {
+                                    await new Promise((r) => setTimeout(r, 500));
+                                    dangerAlert(error);
+                                  });
+                              }
 
+                          $("#modal-admin").on("show.bs.modal", function (event) {
+                              console.log('test1');
+                              var button = $(event.relatedTarget); // Button that triggered the modal
+                              var confirmation = button.data("confirmation");
+                              var form = button.data("form");
+                              var name = button.data("name");
+                              var submit_btn_text = button.data("submit-btn-text");
+                              var submit_btn_class = button.data("submit-btn-class");
 
-              $("#modal-admin").on("show.bs.modal", function (event) {
-                  var button = $(event.relatedTarget); // Button that triggered the modal
-                  var confirmation = button.data("confirmation");
-                  var form = button.data("form");
-                  var name = button.data("name");
-                  var submit_btn_text = button.data("submit-btn-text");
-                  var submit_btn_class = button.data("submit-btn-class");
+                              var modal = $(this);
+                              modal.find("#actionConfirmation").text(confirmation);
+                              var modalForm = modal.find("#modal-form");
+                              console.log(modalForm,"492");
+                              $('#modal-form').html(form);
+                              var actionSubmit = modal.find("#actionSubmit");
+                              actionSubmit.text(submit_btn_text);
+                              actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                              actionSubmit.unbind();
+                              console.log('do submita');
+                              actionSubmit.on("click", function (event) {
+                                  console.log('action-click-test');
+                                  const formElement = modalForm.find("form");
+                                  console.log(formElement,"500");
+                                  const formData = formElement.length
+                                      ? new FormData(formElement.get(0))
+                                      : new FormData();
+                                  // submitActionStatus(name, formData);
 
-                  var modal = $(this);
-                  modal.find("#actionConfirmation").text(confirmation);
-                  var modalForm = modal.find("#modal-form");
-                  $('#modal-form').html(form);
-                  var actionSubmit = modal.find("#actionSubmit");
-                  actionSubmit.text(submit_btn_text);
-                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
-                  actionSubmit.unbind();
-                  actionSubmit.on("click", function (event) {
-                      const formElement = modalForm.find("form");
-                      const formData = formElement.length
-                          ? new FormData(formElement.get(0))
-                          : new FormData();
+                                  // values tut
+                              //      var selectsInModal = $("#modal-admin select");
+                              // // Создаем массив для хранения значений
+                              // var values = [];
+                              //
+                              // // Перебираем каждый элемент <select>
+                              // selectsInModal.each(function() {
+                              //     // Получаем значение выбранной опции и добавляем его в массив
+                              //     var selectedValue = $(this).val();
+                              //     values.push(selectedValue);
+                              // });
+                              //
+                              // // Выводим значения в консоль (вы можете сделать что-то другое с ними)
+                              // console.log(values);
+                                var selectsInModal = $("#modal-admin select");
+                                  var parameters = {}; // Создаем объект для хранения параметров
 
-                    var selectsInModal = $("#modal-admin select");
-                      var parameters = {};
-                      selectsInModal.each(function() {
-                          var selectedValue = $(this).val();
-                          var key = $(this).attr("name");
-                          parameters[key] = selectedValue;
-                      });
-                      submitActionStatus(name, formData, parameters);
-                  });
-              });
+                                  selectsInModal.each(function() {
+                                      // Получаем значение выбранной опции и ключ (например, значение атрибута name)
+                                      var selectedValue = $(this).val();
+                                      var key = $(this).attr("name"); // Предполагается, что у элементов <select> есть атрибут name
 
+                                      // Добавляем значение в объект parameters с ключом key
+                                      parameters[key] = selectedValue;
+                                  });
 
-              $("#modal-department").on("show.bs.modal", function (event) {
-                  var button = $(event.relatedTarget); // Button that triggered the modal
-                  var confirmation = button.data("confirmation");
-                  var form = button.data("form");
-                  var name = button.data("name");
-                  var submit_btn_text = button.data("submit-btn-text");
-                  var submit_btn_class = button.data("submit-btn-class");
+                                  // Выводим объект parameters в консоль (вы можете сделать что-то другое с ним)
+                                  console.log(parameters);
+                              // values end tut
+                                  submitActionStatus(name, formData, parameters);
+                              });
+                          });
 
-                  var modal = $(this);
-                  modal.find("#actionConfirmation").text(confirmation);
-                  var modalForm = modal.find("#modal-form");
-                  $('#modal-form').html(form);
-                  var actionSubmit = modal.find("#actionSubmitDepartment");
-                  actionSubmit.text(submit_btn_text);
-                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
-                  actionSubmit.unbind();
-                  actionSubmit.on("click", function (event) {
-                      const formElement = modalForm.find("form");
-                      const formData = formElement.length
-                          ? new FormData(formElement.get(0))
-                          : new FormData();
+                          $("#modal-department").on("show.bs.modal", function (event) {
+                              console.log('test-department');
+                              var button = $(event.relatedTarget); // Button that triggered the modal
+                              var confirmation = button.data("confirmation");
+                              var form = button.data("form");
+                              var name = button.data("name");
+                              var submit_btn_text = button.data("submit-btn-text");
+                              var submit_btn_class = button.data("submit-btn-class");
 
-                    var selectsInModal = $("#modal-department select");
-                      var parameters = {};
-                      selectsInModal.each(function() {
-                          var selectedValue = $(this).val();
-                          var key = $(this).attr("name");
-                          parameters[key] = selectedValue;
-                      });
-                      submitActionStatus(name, formData, parameters);
-                  });
-              });
+                              var modal = $(this);
+                              modal.find("#actionConfirmation").text(confirmation);
+                              var modalForm = modal.find("#modal-form");
+                              console.log(modalForm,"492");
+                              $('#modal-form').html(form);
+                              var actionSubmit = modal.find("#actionSubmitDepartment");
+                              console.log('actionSubmit: ', actionSubmit)
+                              actionSubmit.text(submit_btn_text);
+                              actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                              actionSubmit.unbind();
+                              console.log('do submita');
+                              actionSubmit.on("click", function (event) {
+                                console.log('department-action-click');
+                                  const formElement = modalForm.find("form");
+                                  console.log(formElement,"500");
+                                  const formData = formElement.length
+                                      ? new FormData(formElement.get(0))
+                                      : new FormData();
+                                  // submitActionStatus(name, formData);
 
-              $("#modal-desk").on("show.bs.modal", function (event) {
-                  var button = $(event.relatedTarget); // Button that triggered the modal
-                  var confirmation = button.data("confirmation");
-                  var form = button.data("form");
-                  var name = button.data("name");
-                  var submit_btn_text = button.data("submit-btn-text");
-                  var submit_btn_class = button.data("submit-btn-class");
+                                  // values tut
+                              //      var selectsInModal = $("#modal-admin select");
+                              // // Создаем массив для хранения значений
+                              // var values = [];
+                              //
+                              // // Перебираем каждый элемент <select>
+                              // selectsInModal.each(function() {
+                              //     // Получаем значение выбранной опции и добавляем его в массив
+                              //     var selectedValue = $(this).val();
+                              //     values.push(selectedValue);
+                              // });
+                              //
+                              // // Выводим значения в консоль (вы можете сделать что-то другое с ними)
+                              // console.log(values);
+                                console.log('select parametrs');
+                                var selectsInModal = $("#modal-department select");
+                                  var parameters = {}; // Создаем объект для хранения параметров
 
-                  var modal = $(this);
-                  modal.find("#actionConfirmation").text(confirmation);
-                  var modalForm = modal.find("#modal-form");
-                  $('#modal-form').html(form);
-                  var actionSubmit = modal.find("#actionSubmitDesk");
-                  actionSubmit.text(submit_btn_text);
-                  actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
-                  actionSubmit.unbind();
-                  actionSubmit.on("click", function (event) {
-                      const formElement = modalForm.find("form");
-                      const formData = formElement.length
-                          ? new FormData(formElement.get(0))
-                          : new FormData();
+                                  selectsInModal.each(function() {
+                                      // Получаем значение выбранной опции и ключ (например, значение атрибута name)
+                                      var selectedValue = $(this).val();
+                                      var key = $(this).attr("name"); // Предполагается, что у элементов <select> есть атрибут name
 
-                    var selectsInModal = $("#modal-desk select");
-                      var parameters = {};
-                      selectsInModal.each(function() {
-                          var selectedValue = $(this).val();
-                          var key = $(this).attr("name");
-                          parameters[key] = selectedValue;
-                      });
-                      submitActionStatus(name, formData, parameters);
-                  });
-              });
+                                      // Добавляем значение в объект parameters с ключом key
+                                      parameters[key] = selectedValue;
+                                  });
 
+                                  // Выводим объект parameters в консоль (вы можете сделать что-то другое с ним)
+                                  console.log('parametrs: ', parameters);
+                              // values end tut
+                                  submitActionStatus(name, formData, parameters);
+                              });
+                          });
 
+                          $("#modal-desk").on("show.bs.modal", function (event) {
+                              console.log('test');
+                              var button = $(event.relatedTarget); // Button that triggered the modal
+                              var confirmation = button.data("confirmation");
+                              var form = button.data("form");
+                              var name = button.data("name");
+                              var submit_btn_text = button.data("submit-btn-text");
+                              var submit_btn_class = button.data("submit-btn-class");
 
+                              var modal = $(this);
+                              modal.find("#actionConfirmation").text(confirmation);
+                              var modalForm = modal.find("#modal-form");
+                              console.log(modalForm,"492");
+                              $('#modal-form').html(form);
+                              var actionSubmit = modal.find("#actionSubmitDesk");
+                              actionSubmit.text(submit_btn_text);
+                              actionSubmit.removeClass().addClass(`btn ${submit_btn_class}`);
+                              actionSubmit.unbind();
+                              actionSubmit.on("click", function (event) {
+                                console.log('desk-action-click')
+                                  const formElement = modalForm.find("form");
+                                  console.log(formElement,"500");
+                                  const formData = formElement.length
+                                      ? new FormData(formElement.get(0))
+                                      : new FormData();
+                                  // submitActionStatus(name, formData);
+
+                                  // values tut
+                              //      var selectsInModal = $("#modal-admin select");
+                              // // Создаем массив для хранения значений
+                              // var values = [];
+                              //
+                              // // Перебираем каждый элемент <select>
+                              // selectsInModal.each(function() {
+                              //     // Получаем значение выбранной опции и добавляем его в массив
+                              //     var selectedValue = $(this).val();
+                              //     values.push(selectedValue);
+                              // });
+                              //
+                              // // Выводим значения в консоль (вы можете сделать что-то другое с ними)
+                              // console.log(values);
+                                var selectsInModal = $("#modal-desk select");
+                                  var parameters = {}; // Создаем объект для хранения параметров
+
+                                  selectsInModal.each(function() {
+                                      // Получаем значение выбранной опции и ключ (например, значение атрибута name)
+                                      var selectedValue = $(this).val();
+                                      var key = $(this).attr("name"); // Предполагается, что у элементов <select> есть атрибут name
+
+                                      // Добавляем значение в объект parameters с ключом key
+                                      parameters[key] = selectedValue;
+                                  });
+
+                                  // Выводим объект parameters в консоль (вы можете сделать что-то другое с ним)
+                                  console.log(parameters);
+                              // values end tut
+                                  submitActionStatus(name, formData, parameters);
+                              });
+                          });
+
+                                  var selectsInModal = $("#modal-admin select");
+                                  var parameters = {}; // Создаем объект для хранения параметров
+
+                                  selectsInModal.each(function() {
+                                      // Получаем значение выбранной опции и ключ (например, значение атрибута name)
+                                      var selectedValue = $(this).val();
+                                      var key = $(this).attr("name"); // Предполагается, что у элементов <select> есть атрибут name
+
+                                      // Добавляем значение в объект parameters с ключом key
+                                      parameters[key] = selectedValue;
+                                  });
+
+                                  // Выводим объект parameters в консоль (вы можете сделать что-то другое с ним)
+                                  console.log(parameters);
   function submitAction(name, formData) {
     $("#modal-loading").modal("show");
     query = new URLSearchParams();
@@ -651,3 +750,8 @@ $(function () {
 
   $('[data-toggle="tooltip"]').tooltip();
 });
+
+
+
+
+

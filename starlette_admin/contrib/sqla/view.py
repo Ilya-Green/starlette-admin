@@ -1,7 +1,7 @@
 from typing import Any, Dict, List, Optional, Sequence, Type, Union
 
 import anyio.to_thread
-from sqlalchemy import Column, String, cast, func, inspect, or_, select
+from sqlalchemy import Column, String, cast, func, inspect, or_, select, text
 from sqlalchemy.exc import NoInspectionAvailable, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import InstrumentedAttribute, Mapper, Session, joinedload
@@ -206,7 +206,7 @@ class ModelView(BaseModelView):
             stmt = stmt.where(where)  # type: ignore
         stmt = stmt.order_by(*build_order_clauses(order_by or [], self.model))
         # for field in self.fields:
-        #     if isinstance(field, RelationField):
+        #     if isinstance(field, RelationField) and not field.exclude_from_edit:
         #         stmt = stmt.options(joinedload(getattr(self.model, field.name)))
         if isinstance(session, AsyncSession):
             return (await session.execute(stmt)).scalars().unique().all()

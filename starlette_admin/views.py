@@ -518,6 +518,10 @@ class BaseModelView(BaseView):
                         obj_serialized[field.name] = [
                             getattr(v, foreign_model.pk_attr) for v in value
                         ]
+                    # elif field.name == 'notes':
+                    #     obj_serialized[field.name] = await foreign_model.serialize(
+                    #         value[-1], request, action, include_relationships=False
+                    #     )
                     else:
                         obj_serialized[field.name] = [
                             await foreign_model.serialize(
