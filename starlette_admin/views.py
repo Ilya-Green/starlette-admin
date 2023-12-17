@@ -497,6 +497,10 @@ class BaseModelView(BaseView):
         include_select2: bool = False,
     ) -> Dict[str, Any]:
         obj_serialized: Dict[str, Any] = {}
+        include_relationships_value = request.query_params.get("include_relationships")
+        if include_relationships_value is not None and include_relationships_value.isdigit() and int(
+                include_relationships_value) == 0:
+            include_relationships = False
         for field in self.fields:
             if isinstance(field, RelationField) and include_relationships:
                 value = getattr(obj, field.name, None)
@@ -518,6 +522,13 @@ class BaseModelView(BaseView):
                         obj_serialized[field.name] = [
                             getattr(v, foreign_model.pk_attr) for v in value
                         ]
+                    elif action == RequestAction.DETAIL:
+                        obj_serialized[field.name] = [
+                            await foreign_model.serialize(
+                                v, request, action, include_relationships=False
+                            )
+                            for v in value
+                        ]
                     # elif field.name == 'notes':
                     #     obj_serialized[field.name] = await foreign_model.serialize(
                     #         value[-1], request, action, include_relationships=False
@@ -527,7 +538,7 @@ class BaseModelView(BaseView):
                             await foreign_model.serialize(
                                 v, request, action, include_relationships=False
                             )
-                            for v in value
+                            for v in value[:1]
                         ]
             elif not isinstance(field, RelationField):
                 value = await field.parse_obj(request, obj)
