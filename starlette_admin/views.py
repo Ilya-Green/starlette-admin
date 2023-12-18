@@ -538,7 +538,7 @@ class BaseModelView(BaseView):
                             await foreign_model.serialize(
                                 v, request, action, include_relationships=False
                             )
-                            for v in value[:1]
+                            for v in value[-1:]
                         ]
             elif not isinstance(field, RelationField):
                 value = await field.parse_obj(request, obj)
