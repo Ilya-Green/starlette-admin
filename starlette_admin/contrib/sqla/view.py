@@ -194,6 +194,15 @@ class ModelView(BaseModelView):
     ) -> Sequence[Any]:
         session: Union[Session, AsyncSession] = request.state.session
         stmt = self.get_list_query().offset(skip)
+
+        query_params = request.query_params
+
+        for field in self.fields:
+            field_name = field.name if hasattr(field, 'name') else str(field)
+            if field_name in query_params:
+                value = query_params[field_name]
+                stmt = stmt.where(getattr(self.model, field_name) == value)
+
         if limit > 0:
             stmt = stmt.limit(limit)
         if where is not None:
